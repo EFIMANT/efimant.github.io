@@ -323,30 +323,46 @@
 
 
     <script>
-   document.getElementById("loginForm").addEventListener("submit", function(event) {
+ document.getElementById("loginForm").addEventListener("submit", async function(event) {
     event.preventDefault();
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
 
-    fetch("https://script.google.com/macros/s/AKfycbyF20tzK4LHSlO2h3XDKgclkQQw9H1I_hRle6pfsC7uWRLdAYAyVECwlTGhDfIB0oLJow/exec", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ user: username, pass: password })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById("login").style.display = "none";
-            document.getElementById("content").style.display = "block";
-        } else {
-            alert("Usuario o contraseña incorrectos");
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const message = document.getElementById("message");
+    const loginDiv = document.getElementById("login");
+    const contentDiv = document.getElementById("content");
+
+    try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbxoDC5aAKN_FCWS1Ff7jAn7EQpdRpfxu14iwmmLo3v4sWN3hz0XOGDKSgS8oEfAOkzupQ/exec", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+        });
+
+        if (!response.ok) {
+            throw new Error("La respuesta no es válida");
         }
-    })
-    .catch(error => console.error("Error:", error));
-});
 
+        const result = await response.json(); // Asegúrate de que sea JSON
+
+        if (result.success) {
+            message.textContent = "✅ Inicio de sesión exitoso";
+            message.style.color = "green";
+
+            // Ocultar el formulario y mostrar el contenido
+            loginDiv.style.display = "none";
+            contentDiv.style.display = "block";
+        } else {
+            message.textContent = "❌ " + result.message;
+            message.style.color = "red";
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        message.textContent = "❌ Hubo un problema al comunicarse con el servidor";
+        message.style.color = "red";
+    }
+});
 
     </script>
 
