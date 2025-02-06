@@ -135,46 +135,48 @@ function editarRegistro(boton) {
     document.getElementById("Empresa").value = celdas[5].textContent;
     document.getElementById("total").value = limpiarNumero(celdas[6].textContent);
 
-    
+
     fila.remove();
     let modal = new bootstrap.Modal(document.getElementById("modal"));
     modal.show();
 }
-document.getElementById("descargarExcel").addEventListener("click", function () {
-    let tabla = document.getElementById("tabla-body");
-    let filas = tabla.getElementsByTagName("tr");
-    let datos = [];
+document.addEventListener("click", function (event) {
+    if (event.target.matches("#descargarExcel") || event.target.matches("#descargarExcelModal")) {
+        let tabla = document.getElementById("tabla-body");
+        let filas = tabla.getElementsByTagName("tr");
+        let datos = [];
 
-    // Agregar encabezados
-    let encabezados = ["Placa", "Cantidad", "Descripción", "Precio", "Estado", "Empresa", "Total"];
-    datos.push(encabezados);
+        // Agregar encabezados
+        let encabezados = ["Placa", "Cantidad", "Descripción", "Precio", "Estado", "Empresa", "Total"];
+        datos.push(encabezados);
 
-    // Recorrer las filas de la tabla
-    for (let fila of filas) {
-        let celdas = fila.getElementsByTagName("td");
-        let filaData = [];
-        for (let celda of celdas) {
-            filaData.push(celda.textContent.trim());
+        // Recorrer las filas de la tabla
+        for (let fila of filas) {
+            let celdas = fila.getElementsByTagName("td");
+            let filaData = [];
+            for (let celda of celdas) {
+                filaData.push(celda.textContent.trim());
+            }
+            datos.push(filaData);
         }
-        datos.push(filaData);
+
+        // Crear un libro de trabajo y una hoja
+        let wb = XLSX.utils.book_new();
+        let ws = XLSX.utils.aoa_to_sheet(datos);
+
+        // Agregar la hoja al libro
+        XLSX.utils.book_append_sheet(wb, ws, "Registros");
+
+        // Descargar el archivo Excel
+        XLSX.writeFile(wb, "datos_tabla.xlsx");
     }
-
-    // Crear un libro de trabajo y una hoja
-    let wb = XLSX.utils.book_new();
-    let ws = XLSX.utils.aoa_to_sheet(datos);
-
-    // Agregar la hoja al libro
-    XLSX.utils.book_append_sheet(wb, ws, "Registros");
-
-    // Descargar el archivo Excel
-    XLSX.writeFile(wb, "datos_tabla.xlsx");
 });
 
 
 function obtenerTablaHTML() {
     let filas = document.querySelectorAll("#tabla-body tr");
     let tablaHTML = '<table border="1" style="border-collapse: collapse; width: 100%;">';
-    
+
     // Encabezados
     tablaHTML += `<tr>
                     <th>Placa</th>
@@ -213,118 +215,119 @@ function enviarCorreo() {
         from_name: "Efimant",
         message: tablaHTML
     }, "QbOQvaMnW1IMV30XA")
-    .then(response => {
-        console.log("Correo enviado con éxito", response);
-        alert("Correo enviado correctamente");
-    })
-    .catch(error => {
-        console.error("Error al enviar el correo:", error);
-        alert("Hubo un error al enviar el correo");
-    });
+        .then(response => {
+            console.log("Correo enviado con éxito", response);
+            alert("Correo enviado correctamente");
+        })
+        .catch(error => {
+            console.error("Error al enviar el correo:", error);
+            alert("Hubo un error al enviar el correo");
+        });
 }
 
 
 let doc;
 
-document.getElementById("generarPDF").addEventListener("click", function () {
-    const { jsPDF } = window.jspdf;
-    doc = new jsPDF(); // Se asigna a la variable global
+document.addEventListener("click", function (event) {
+    if (event.target.matches("#generarPDF") || event.target.matches("#generarPDFModal")) {
+        const { jsPDF } = window.jspdf;
+        doc = new jsPDF(); // Se asigna a la variable global
 
-    // Estilos y configuración
-    const img = new Image();
-    img.src = "https://efimant.com/images/logo.png"; // Reemplaza con tu logo
-    doc.addImage(img, "PNG", 15, 15, 60, 20); // Ajusta el tamaño y la posición*/
+        // Estilos y configuración
+        const img = new Image();
+        img.src = "https://efimant.com/images/logo.png"; // Reemplaza con tu logo
+        doc.addImage(img, "PNG", 15, 15, 60, 20); // Ajusta el tamaño y la posición*/
 
-    // Nombre del documento
-    doc.setFontSize(28);
-    doc.setTextColor(54, 95, 145); // Color azul oscuro
-    doc.text("Recibo de ventas", 155, 30, { align: "center" });
+        // Nombre del documento
+        doc.setFontSize(28);
+        doc.setTextColor(54, 95, 145); // Color azul oscuro
+        doc.text("Recibo de ventas", 155, 30, { align: "center" });
 
-    // Línea separadora
-    doc.setDrawColor(54, 95, 145);
-    doc.line(15, 37, 195, 37);
+        // Línea separadora
+        doc.setDrawColor(54, 95, 145);
+        doc.line(15, 37, 195, 37);
 
-    // Datos de la empresa
-    doc.setFontSize(10);
-    doc.setTextColor(0, 0, 0);
-    doc.text("EFIMANT Ingenieria", 15, 45);
-    doc.setFont("helvetica", "italic");
-    doc.text("Tu aliado para el mantenimiento electrico", 15, 50);
+        // Datos de la empresa
+        doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0);
+        doc.text("EFIMANT Ingenieria", 15, 45);
+        doc.setFont("helvetica", "italic");
+        doc.text("Tu aliado para el mantenimiento electrico", 15, 50);
 
-    // Fecha y número de factura alineados a la derecha
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(54, 95, 145);
-    doc.text("Fecha:", 140, 45);
-    doc.setTextColor(0, 0, 0);
-    doc.text("5 de febrero de 2025", 155, 45);
+        // Fecha y número de factura alineados a la derecha
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(54, 95, 145);
+        doc.text("Fecha:", 140, 45);
+        doc.setTextColor(0, 0, 0);
+        doc.text("5 de febrero de 2025", 155, 45);
 
-    doc.setTextColor(54, 95, 145);
-    doc.text("N.º de factura:", 140, 50);
-    doc.setTextColor(0, 0, 0);
-    doc.text("_____", 165, 50);
+        doc.setTextColor(54, 95, 145);
+        doc.text("N.º de factura:", 140, 50);
+        doc.setTextColor(0, 0, 0);
+        doc.text("_____", 165, 50);
 
-    // Información del cliente
-    doc.setFont("helvetica", "bold");
-    doc.text("Vendido a:", 15, 60);
-    doc.setFont("helvetica", "normal");
-    doc.text("Nombre: ___________________________________", 15, 65);
-    doc.text("Empresa: __________________________________", 15, 70);
-    doc.text("Dirección: __________________________________", 15, 75);
-    doc.text("Ciudad y código postal: _______________________", 110, 65);
-    doc.text("Teléfono: __________________________________", 110, 70);
+        // Información del cliente
+        doc.setFont("helvetica", "bold");
+        doc.text("Vendido a:", 15, 60);
+        doc.setFont("helvetica", "normal");
+        doc.text("Nombre: ___________________________________", 15, 65);
+        doc.text("Empresa: __________________________________", 15, 70);
+        doc.text("Dirección: __________________________________", 15, 75);
+        doc.text("Ciudad y código postal: _______________________", 110, 65);
+        doc.text("Teléfono: __________________________________", 110, 70);
 
-    // Tabla de productos
-    let startY = 85;
-    doc.autoTable({
-        startY: startY,
-        head: [["Placa", "Cantidad", "Descripción", "Precio", "Estado", "Empresa"]],
-        body: obtenerDatosDeTabla(),
-        theme: "grid",
-        styles: {
+        // Tabla de productos
+        let startY = 85;
+        doc.autoTable({
+            startY: startY,
+            head: [["Placa", "Cantidad", "Descripción", "Precio", "Estado", "Empresa"]],
+            body: obtenerDatosDeTabla(),
+            theme: "grid",
+            styles: {
 
-            fontSize: 10,
-            cellPadding: 2,
-            fillColor: [255, 255, 255], // Color de fondo blanco
-            textColor: [0, 0, 0], // Color de texto negro
-            lineColor: [63, 166, 184], // Color de líneas negro
-            lineWidth: 0.5 // Ancho de líneas
-        },
-        headStyles: {
-            textalign: "center",
-            fillColor: [176, 220, 228], // Color de  encabezado
-            textColor: [0, 0, 0] // Color de texto negro para encabezado
+                fontSize: 10,
+                cellPadding: 2,
+                fillColor: [255, 255, 255], // Color de fondo blanco
+                textColor: [0, 0, 0], // Color de texto negro
+                lineColor: [63, 166, 184], // Color de líneas negro
+                lineWidth: 0.5 // Ancho de líneas
+            },
+            headStyles: {
+                textalign: "center",
+                fillColor: [176, 220, 228], // Color de  encabezado
+                textColor: [0, 0, 0] // Color de texto negro para encabezado
+            }
+        });
+
+        // Totales
+        let finalY = doc.lastAutoTable.finalY + 10;
+        let pageWidth = doc.internal.pageSize.width; // Obtiene el ancho de la página
+        let rightAlignX = pageWidth - 15; // Ajusta la posición al margen derecho
+
+        const sumaTotal = calcularSumaTotal(); // Calcular la suma total
+        const sumaTotalFormateada = sumaTotal.toFixed(2);
+
+        doc.text("Total:", rightAlignX - 42, finalY);
+        doc.text(`${sumaTotalFormateada}`, rightAlignX, finalY, { align: "right" });
+
+        // Pie de página
+        doc.setFontSize(10);
+        doc.text("Gracias por su confianza.", 105, finalY + 40, { align: "center" });
+        doc.text("Duitama, Boyaca, Colombia,  318 814 8937, efimant.oficial@gmail.com", 105, finalY + 45, { align: "center" });
+
+        // Guardar el PDF
+        doc.save("factura.pdf");
+
+        // Convertir PDF a Blob y mostrarlo en un iframe
+        let pdfData = doc.output("blob");
+        let pdfURL = URL.createObjectURL(pdfData);
+        let pdfFrame = document.getElementById("pdf-preview");
+        if (pdfFrame) {
+            pdfFrame.src = pdfURL;
+        } else {
+            console.warn("No se encontró el iframe con id 'pdf-preview'");
         }
-    });
-
-    // Totales
-    let finalY = doc.lastAutoTable.finalY + 10;
-    let pageWidth = doc.internal.pageSize.width; // Obtiene el ancho de la página
-    let rightAlignX = pageWidth - 15; // Ajusta la posición al margen derecho
-
-    const sumaTotal = calcularSumaTotal(); // Calcular la suma total
-    const sumaTotalFormateada = sumaTotal.toFixed(2);
-    
-    doc.text("Total:", rightAlignX - 42, finalY);
-    doc.text(`${sumaTotalFormateada}`, rightAlignX, finalY, { align: "right" }); 
-
-    // Pie de página
-    doc.setFontSize(10);
-    doc.text("Gracias por su confianza.", 105, finalY + 40, { align: "center" });
-    doc.text("Duitama, Boyaca, Colombia,  318 814 8937, efimant.oficial@gmail.com", 105, finalY + 45, { align: "center" });
-
-    // Guardar el PDF
-    doc.save("factura.pdf");
-    
-    // Convertir PDF a Blob y mostrarlo en un iframe
-    let pdfData = doc.output("blob");
-    let pdfURL = URL.createObjectURL(pdfData);
-    let pdfFrame = document.getElementById("pdf-preview");
-    if (pdfFrame) {
-        pdfFrame.src = pdfURL;
-    } else {
-        console.warn("No se encontró el iframe con id 'pdf-preview'");
     }
-    
 });
 // Función para extraer datos específicos de la tabla
 function obtenerDatosDeTabla() {
@@ -373,19 +376,19 @@ function enviarPorWhatsApp() {
         method: "POST",
         body: formData,
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === "ok") {
-            let fileURL = data.data.downloadPage;
-            const numero = "573115186410";
-            let mensaje = encodeURIComponent("Aquí tienes el archivo PDF: " + fileURL);
-            let whatsappLink = `https://api.whatsapp.com/send?phone=${numero}&text=${mensaje}`;
-            window.open(whatsappLink, "_blank");
-        } else {
-            alert("Error al subir el archivo.");
-        }
-    })
-    .catch(error => console.error("Error:", error));
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "ok") {
+                let fileURL = data.data.downloadPage;
+                const numero = "573188147937";
+                let mensaje = encodeURIComponent("Aquí tienes el archivo PDF: " + fileURL);
+                let whatsappLink = `https://api.whatsapp.com/send?phone=${numero}&text=${mensaje}`;
+                window.open(whatsappLink, "_blank");
+            } else {
+                alert("Error al subir el archivo.");
+            }
+        })
+        .catch(error => console.error("Error:", error));
 }
 
 function limpiarTabla() {
