@@ -77,7 +77,7 @@ document.getElementById("generatePdfWhatsappBtn").addEventListener("click", func
     }
 
     generatePDFWhatsapp(fechaw, cuentaw); // Generar PDF
-    doc.save(`Cuenta_Cobro_#${cuenta || "ingresado"} ${empresaInfo.nombre || ""}.pdf`); // Cerrar modal
+    document.getElementById("pdfWhatsappModal").style.display = "none"; // Cerrar modal
 });
 
 
@@ -354,7 +354,7 @@ function generatePDF(fecha, cuenta) {
     doc.text(" ¡Estamos felices de que seas parte de nosotros!", 66, startY + 25);
 
     // Guardar el PDF
-    doc.save("cuenta_cobro.pdf");
+     doc.save(`Cuenta_Cobro_#${cuenta || "ingresado"} ${empresaInfo.nombre || ""}.pdf`);
     // Guardar el PDF en el iframe
     /*const iframe = document.getElementById("pdfPreview");
     const pdfData = doc.output('arraybuffer');
