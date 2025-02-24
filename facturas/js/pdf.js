@@ -77,7 +77,7 @@ document.getElementById("generatePdfWhatsappBtn").addEventListener("click", func
     }
 
     generatePDFWhatsapp(fechaw, cuentaw); // Generar PDF
-    document.getElementById("pdfWhatsappModal").style.display = "none"; // Cerrar modal
+    doc.save(`Cuenta_Cobro_#${cuenta || "ingresado"} ${empresaInfo.nombre || ""}.pdf`); // Cerrar modal
 });
 
 
