@@ -148,7 +148,7 @@ async function enviarCorreo(email, fechaCorreo, cuentaCorreo, data, empresaInfo)
     params.append("sumaTotal", sumaTotal.toFixed(2));
 
     try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbwzC-vIHGGlyCiJh74FObR_DWaGQ9k9ZSu7n896K29q4qjVfhNL59GXqK4UNAO-Tw7K4g/exec", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbzPp2GuJUIgRmxQb0bvBPdm-0h_jfIsvECRt_RkrzGLnIclBixvT3l_FGyljH6xyrYV0A/exec", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: params.toString(),
