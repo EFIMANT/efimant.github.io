@@ -370,7 +370,13 @@ function generatePDF(fecha, cuenta) {
   doc.text(" ¡Estamos felices de que seas parte de nosotros!", 66, startY + 25);
 
   // Guardar el PDF
-  doc.save("cuenta_cobro.pdf");
+  const empresaNombre = empresaInfo.nombre.replace(/\s+/g, "_"); // Reemplaza espacios por guiones bajos
+  const numeroCuenta = cuenta;
+
+  const nombreArchivo = `cuenta_cobro_#_${numeroCuenta}_de_${empresaNombre}.pdf`;
+
+  doc.save(nombreArchivo);
+
   // Guardar el PDF en el iframe
   /*const iframe = document.getElementById("pdfPreview");
       const pdfData = doc.output('arraybuffer');
